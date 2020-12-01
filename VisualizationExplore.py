@@ -347,36 +347,113 @@ sns.boxplot(x="Hour", y="Duration(min)", data=df_hourly_shower, palette="Pastel1
 
 
 #####################
+
+# Shower
+df_events['Flowrate(gpm)'][df_events['Label'] == 'shower'].mean()
+# 1.758 gpm
+
+df_events['Volume(gal)'][df_events['Label'] == 'shower'].sum()/14
+# 589 gal
+# 42 gal
+
+df_events['Duration(min)'][df_events['Label'] == 'shower'].sum()
+# 313 minutes
+# 22.4 minutes
+
+(df_events['Duration(min)'][df_events['Label'] == 'shower']*1.5).sum()/14
+# 470.7 gal
+# 33.6 gal
+
+df_events['Duration(min)'][df_events['Label'] == 'shower'].mean()
+#9.5
+
+# new dataframe
+df_shower = df_events[df_events['Label'] =='shower']
+df_shower['Duration(min)'].sum()
+# 313.8 min
+df_shower['Volume(gal)'].sum()
+# 589.3 gal
+
+# 589.3/313.8 = 1.88 gpm
+
+# 313.8*1.5 = 470.7 gal/14 = 33.6 gal/day
+# saving 8.5 gal/day
+
+df_shower['ShortShowerDuration'] = np.where(df_shower['Duration(min)'] >= 10, 10, df_shower['Duration(min)'])
+df_shower['ShortShowerDuration'].sum()
+# 261.7 min * 1.88 gpm = 492 gallons/14 = 35.1 gal/day
+# saving 7 gal/day
+
+#261.7 min * 1.5 gpm = 392 gallons/14 = 28 gal/day
+# saving 14 gal/day
+
+plt.hist(df_shower['Duration(min)'])
+
+
+
 # $23.25 for 10,000 gallons of water.
 # 75 cents per 1,000 gallons if residents use anywhere from 10,001 to 50,000 gallons.
 # 1.50 per 1,000 gallons for all usage over 50,000 gallons
 
 df['monthly'] = df['daily'] * 30
 
+# 27154 gallons/acre 0.28*2/3 acres = 5069 gal is 1 inch of water
+# 27154 * 0.28 * 2/3 * 30/7 = 21723 gallons/month
 
-# 27154 gallons/acre 0.28*2/3 acres = 5000 gal is 1 inch of water
-# 5000 gallons/week = 20000 gallons/month
+47340 * 7/30 * 3/2 * 1/0.28 *1/27154
+# currently using 2.18 inches/week
+
+# 27154 gallons/acre 0.28*2/3*0.5 acres = 2534.5 gal is 1 inch of water
+# 27154 * 0.28 * 2/3 * 30/7 * 0.5 = 10862 gallons/month
 
 
-Labels = ['Indoor', 'Outdoor']
-Values1 = [(5160),10000, ]
-Values2 = [(48600), 40000,]
-Values3 =
+
+Labels = ['Indoor', 'Sprinklers']
+Scenario = ['Current Irrigation Schedule', 'Reduce Lawn by Half', 'Reduce Irrigation by Half', 'Reduce Lawn and Irrigation']
+Indoor = [5160, 5160, 5160, 5160]
+Sprinklers = [47430, 23715, 21723, 10862]
+
+pricing = pd.DataFrame({'Scenario':Scenario, 'Indoor':Indoor, 'Sprinklers':Sprinklers})
+pricing['Total'] = pricing['Indoor'] + pricing['Sprinklers']
+pricing['FirstTier'] = np.where(pricing['Total'] >= 50000, 40000, pricing['Total']-10000)
+pricing['SecondTier'] = np.where(pricing['Total'] >= 50000, pricing['Total']-50000, 0)
+pricing['FirstTierCost'] = pricing['FirstTier']*0.75/1000
+pricing['SecondTierCost'] = pricing['SecondTier']*1.5/1000
+pricing['TotalCost'] = pricing['FirstTierCost'] + pricing['SecondTierCost'] + 23.25
+
 colors = [plt.cm.Spectral(i/float(len(Labels)-1)) for i in range(len(Labels))]
-N = len(df['Label'])
 width = 0.5
-bottom = 0
-for elem, color in zip(Labels, colors):
-    plt.bar(0, Values, bottom=bottom, color=color, width=width)
-    bottom += Values
-
+p1 = plt.bar(Scenario, Indoor, bottom=0, color=colors[0], width=width)
+p2 = plt.bar(Scenario, Sprinklers, bottom=Indoor, color=colors[1], width=width)
+p3 = plt.axhline(y=10000, linewidth=1.5, linestyle='--', color='k')
+plt.text(x=4.5, y=10500, s='Flat Rate Tier', fontweight='bold', color='k')
+p4 = plt.axhline(y=50000, linewidth=1.5, linestyle='--', color='k')
+plt.text(x=4.5, y=50500, s='Irrigation Tier', fontweight='bold', color='gray')
+for i, rows in pricing.iterrows():
+    plt.annotate('{:,}'.format(rows['Total']) + ' gal', xy=(i, rows['Total']+1000), rotation=0, color='k', ha='center', va='center', alpha =0.7, fontsize=9)
+    plt.annotate('${:,.2f}'.format(rows['TotalCost']), xy=(i, 13000), rotation=0, color='k', ha='center', va='center', fontsize=9, bbox=dict(boxstyle='square', fc='white'))
+plt.annotate('Flat Rate\n$23.25', xy=(3.35, 5000), xytext=(3.425, 5000), annotation_clip=False, rotation=0,
+            fontsize=9, ha='left', va='center',
+            bbox=dict(boxstyle='square', fc='white'),
+            arrowprops=dict(arrowstyle='-[, widthB=2.4, lengthB=0.9', lw=1))
+plt.annotate(' $0.75/\n1000gal', xy=(3.35, 30000), xytext=(3.425, 30000), annotation_clip=False, rotation=0,
+            fontsize=9, ha='left', va='center',
+            bbox=dict(boxstyle='square', fc='white'),
+            arrowprops=dict(arrowstyle='-[, widthB=10.35, lengthB=0.9', lw=1))
+plt.annotate(' $1.50/\n1000gal', xy=(3.35, 52600), xytext=(3.425, 52600), annotation_clip=False, rotation=0,
+            fontsize=9, ha='left', va='center',
+            bbox=dict(boxstyle='square', fc='white'),
+            arrowprops=dict(arrowstyle='-[, widthB=1.2, lengthB=0.9', lw=1))
 plt.ylabel('Volume (gal)')
-plt.title('Total Monthly Water Use')
-plt.legend(Labels)
+plt.title('Irrigation Season Monthly Water Use and Cost')
+plt.legend((p1, p2), Labels, loc='upper center', ncol=2)
 plt.show()
 
 
-
+for i, rows in df.iterrows():
+    plt.annotate(rows["a"], xy=(i, rows["a"]), rotation=0, color="C0")
+    plt.annotate(rows["b"], xy=(i+0.1, rows["b"]), color="lightblue", rotation=+20, ha="left")
+    plt.annotate(rows["t"], xy=(i-0.1, rows["t"]), color="purple", rotation=-20, ha="right")
 
 
 
