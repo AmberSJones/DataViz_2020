@@ -10,44 +10,6 @@ import seaborn as sns
 #####################
 df_events = pd.read_csv('Classified_Events.csv', engine='python', header=0, parse_dates=True, infer_datetime_format=True)
 
-# Organize data into groups
-#####################
-groups = df_events.groupby('Label')
-df_sort = df_events.sort_values('Volume(gal)', ascending=False)
-# two distinct types of irrigation events
-df_sub = df_events[df_events['Volume(gal)'] < 2000]
-groups = df_sub.groupby('Label')
-
-#####################
-# Volume and Duration ranges
-#####################
-# Create Fig and gridspec
-fig = plt.figure(figsize=(16, 10), dpi=80)
-grid = plt.GridSpec(4, 4, hspace=0.5, wspace=0.2)
-# Define the axes
-ax_main = fig.add_subplot(grid[:-1, :-1])
-ax_right = fig.add_subplot(grid[:-1, -1], xticklabels=[], yticklabels=[])
-ax_bottom = fig.add_subplot(grid[-1, 0:-1], xticklabels=[], yticklabels=[])
-# Scatterplot on main ax
-for name, group in groups:
-    ax_main.plot(group[group['Duration(min)'], 'Volume(gal)'], marker='o', linestyle='', label=name)
-    # ax_main.sns.scatterplot(x="Duration(min)", y="Volume(gal)", data=df_events, hue="Label")
-ax_main.legend()
-# histogram on the bottom
-ax_bottom.hist(df_sub['Duration(min)'], 40, histtype='stepfilled', orientation='vertical', color='gray')
-ax_bottom.invert_yaxis()
-# histogram on the right
-ax_right.hist(df_sub['Volume(gal)'], 40, histtype='stepfilled', orientation='horizontal', color='gray')
-# Decorations
-ax_main.set(title='Duration vs Volume', xlabel='Volume(gal)', ylabel='Duration(min)')
-ax_main.title.set_fontsize(20)
-for item in ([ax_main.xaxis.label, ax_main.yaxis.label] + ax_main.get_xticklabels() + ax_main.get_yticklabels()):
-    item.set_fontsize(14)
-xlabels = ax_main.get_xticks().tolist()
-ax_main.set_xticklabels(xlabels)
-plt.show()
-
-
 #####################
 # Hourly Aggregation
 #####################
@@ -57,125 +19,115 @@ plt.show()
 # Add hour of event
 df_hourly = df_events[['Volume(gal)', 'Duration(min)', 'Label']].copy()
 df_hourly['Hour'] = pd.to_datetime(df_events['StartTime']).dt.hour
-# Add total volume and mean/min/max duration
+# Group data into total volume and mean/min/max duration for each hour/label
 df_grouped = df_hourly.groupby(['Label', 'Hour'], as_index=False).agg({'Volume(gal)': np.sum, 'Duration(min)': ['mean', 'min', 'max']})
 df_grouped.columns = ['Label', 'Hour', 'Volume_tot', 'Duration_mean', 'Duration_min', 'Duration_max']
-
 # Pivot table based on hourly volume
-df_pvt = pd.pivot_table(df_grouped, values='Volume_tot', index=['Hour'], columns=['Label'], fill_value=0)
-df_pvt = df_pvt[['irrigation', 'hose', 'shower', 'toilet', 'clothwasher', 'faucet']]
+df_hr_vol = pd.pivot_table(df_grouped, values='Volume_tot', index=['Hour'], columns=['Label'], fill_value=0)
+df_hr_vol = df_hr_vol[['irrigation', 'hose', 'shower', 'toilet', 'clothwasher', 'faucet']]
 # Subset indoor use
-df_indoor = df_pvt.drop(columns=['irrigation', 'hose'], index=[0, 3, 4, 5, 6])
+df_hr_vol = df_hr_vol.drop(columns=['irrigation', 'hose'], index=[0, 3, 4, 5, 6])
+df_hr_vol = df_hr_vol.rename(columns={'shower': 'Shower', 'toilet': 'Toilet', 'clothwasher': 'Clothes Washer', 'faucet': 'Faucet'})
 
-# Stacked Bar Plot Indoor Uses
+
+# Plot Hourly Indoor Uses
 #####################
-Labels = list(df_indoor.columns)
+Labels = list(df_hr_vol.columns)
 colors = [plt.cm.Spectral(i/float(len(Labels)-1)) for i in range(len(Labels))]
-N = len(df_indoor)
+N = len(df_hr_vol)
 bottom = np.zeros(N)
 width = 0.5
 for elem, color in zip(Labels, colors):
-    plt.bar(df_indoor.index, df_indoor[elem], bottom=bottom, color=color, width=width)
-    bottom += df_indoor[elem]
+    plt.bar(df_hr_vol.index, df_hr_vol[elem], bottom=bottom, color=color, width=width)
+    bottom += df_hr_vol[elem]
 plt.ylabel('Volume (gal)')
 plt.xlabel('Hour of Day')
-plt.title('Total Hourly Water Use')
-plt.xticks(df_indoor.index)
+plt.title('Indoor Hourly Water Use')
+plt.xticks(df_hr_vol.index)
 plt.legend(Labels)
 plt.show()
 
-# Shower Durations
+# Plot Hourly Shower Durations
 #####################
-df_hourly_shower = df_hourly[(df_events.Label == 'shower')]
+df_hr_shower = df_grouped[df_grouped['Label'] == 'shower']
 
-sns.stripplot(x="Hour", y="Duration(min)", data=df_hourly_shower, palette="Pastel1")
-sns.boxplot(x="Hour", y="Duration(min)", data=df_hourly_shower, palette="Pastel1", width=0)
-
-sns.boxplot(x='site', y='value', hue='label', data=df)
-sns.stripplot(x='site', y='value', hue='label', data=df,
-              jitter=True, split=True, linewidth=0.5)
-plt.legend(loc='upper left')
-
-
-
-
-
-
-
-#Shower Duration
-df_pvt_duration = pd.pivot_table(df_grouped, values='Duration_mean', index=['Hour'], columns=['Label'], fill_value=0)
-df_pvt_duration = df_pvt_duration[['irrigation', 'hose', 'shower', 'toilet', 'clothwasher', 'faucet']]
-df_drop_duration = df_pvt_duration.drop(columns=['irrigation', 'hose'], index=[0, 3, 4, 5, 6])
-
-df_pvt_duration = pd.pivot_table(df_grouped, values='Duration_max', index=['Hour'], columns=['Label'], fill_value=0)
-df_pvt_duration = df_pvt_duration[['irrigation', 'hose', 'shower', 'toilet', 'clothwasher', 'faucet']]
-df_drop_duration = df_pvt_duration.drop(columns=['irrigation', 'hose'], index=[0, 3, 4, 5, 6])
-
-plt.bar(df_drop_duration.index, df_drop_duration['shower'], width=1, edgecolor='white', color='#2d7f5e')
-plt.ylabel('Duration (min)')
-plt.xlabel('Hour of Day')
-plt.title('Hourly Shower Duration')
-plt.xticks(df_drop.index)
-plt.show()
-
-
-# use box plots? lines of ranges? violin plots?
+fig, ax = plt.subplots(figsize=(16,10), dpi= 80)
+ax.vlines(x=df_hr_shower['Hour'], ymin=df_hr_shower['Duration_min'], ymax=df_hr_shower['Duration_max'], color='grey', alpha=0.4)
+ax.scatter(df_hr_shower['Hour'], df_hr_shower['Duration_min'], color='skyblue', alpha=1, label='Minimum')
+ax.scatter(df_hr_shower['Hour'], df_hr_shower['Duration_max'], color='green', alpha=0.4, label='Maximum')
+ax.scatter(df_hr_shower['Hour'], df_hr_shower['Duration_mean'], marker='+', color='black', alpha=0.4, label='Average')
+ax.ylabel('Duration (min)')
+ax.xlabel('Hour of Day')
 
 #####################
-# Grouped Violin Plot
+# Variability in Uses
 #####################
 df_indoor_events = df_events[(df_events.Label != 'irrigation') & (df_events.Label != 'hose')]
+df_indoor_grouped = df_indoor_events.groupby(['Label'], as_index=False).agg({'Volume(gal)': np.sum, 'Duration(min)': ['mean', 'min', 'max']})
+df_indoor_grouped.columns = ['Label', 'Volume_tot', 'Duration_mean', 'Duration_min', 'Duration_max']
 
-sns.violinplot(x="Label", y="Volume(gal)", data=df_indoor_events, palette="Pastel1")
-sns.violinplot(x="Label", y="Duration(min)", data=df_indoor_events, palette="Pastel1")
-sns.plt.show()
-
-# Shower Hourly Violin Plot
-df_hourly_shower = df_hourly[(df_events.Label == 'shower')]
-sns.violinplot(x="Hour", y="Duration(min)", data=df_hourly_shower, palette="Pastel1", cut =0)
-sns.boxplot(x="Hour", y="Duration(min)", data=df_hourly_shower, palette="Pastel1")
-
+fig, ax = plt.subplots(figsize=(16,10), dpi= 80)
+ax.vlines(x=df_indoor_grouped['Label'], ymin=df_indoor_grouped['Duration_min'], ymax=df_indoor_grouped['Duration_max'], color='grey', alpha=0.4)
+ax.scatter(df_indoor_grouped['Label'], df_indoor_grouped['Duration_min'], color='skyblue', alpha=1, label='Minimum')
+ax.scatter(df_indoor_grouped['Label'], df_indoor_grouped['Duration_max'], color='green', alpha=0.4, label='Maximum')
+ax.scatter(df_indoor_grouped['Label'], df_indoor_grouped['Duration_mean'], marker='+', color='black', alpha=0.4, label='Average')
+ax.ylabel('Duration (min)')
 
 #####################
-
-# Shower
-df_events['Flowrate(gpm)'][df_events['Label'] == 'shower'].mean()
-# 1.758 gpm
-
-df_events['Volume(gal)'][df_events['Label'] == 'shower'].sum()/14
-# 589 gal
-# 42 gal
-
-df_events['Duration(min)'][df_events['Label'] == 'shower'].sum()
-# 313 minutes
-# 22.4 minutes
-
-(df_events['Duration(min)'][df_events['Label'] == 'shower']*1.5).sum()/14
-# 470.7 gal
-# 33.6 gal
-
-df_events['Duration(min)'][df_events['Label'] == 'shower'].mean()
-#9.5
-
-# new dataframe
+# Shower Scenarios
+#####################
+# Subset for shower data
 df_shower = df_events[df_events['Label'] =='shower']
-df_shower['Duration(min)'].sum()
-# 313.8 min
-df_shower['Volume(gal)'].sum()
-# 589.3 gal
 
-# 589.3/313.8 = 1.88 gpm
+# Current Scenario
+#####################
+current_daily_vol = df_shower['Volume(gal)'].sum()/14
+# 42 gal/day
+current_daily_dur = df_shower['Duration(min)'].sum()/14
+# 22.4 minutes/day
+current_gpm = df_shower['Volume(gal)'].sum()/df_shower['Duration(min)'].sum()
+# 1.88 gpm
 
-# 313.8*1.5 = 470.7 gal/14 = 33.6 gal/day
-# saving 8.5 gal/day
-
-df_shower['ShortShowerDuration'] = np.where(df_shower['Duration(min)'] >= 10, 10, df_shower['Duration(min)'])
-df_shower['ShortShowerDuration'].sum()
-# 261.7 min * 1.88 gpm = 492 gallons/14 = 35.1 gal/day
+# Reduce Shower Duration
+#####################
+max_duration = 10  # set maximum shower duration (min)
+df_shower['ShortShowerDuration'] = np.where(df_shower['Duration(min)'] >= max_duration, max_duration, df_shower['Duration(min)'])
+short_dur = df_shower['ShortShowerDuration'].sum()/14
+# 18.9 minutes/day
+short_dur_vol = short_dur * current_gpm
+# 35.1 gal/day
+short_dur_save = current_daily_vol - short_dur_vol
 # saving 7 gal/day
 
-#261.7 min * 1.5 gpm = 392 gallons/14 = 28 gal/day
+# Ultra Low Flow Shower Head
+#####################
+low_flow = 1.26  # set low flow shower rate (gpm)
+low_flow_vol = current_daily_dur * low_flow
+# 33.6 gal/day
+low_flow_save = current_daily_vol - low_flow_vol
+# saving 8.5 gal/day
+
+# Reduce Both Flow and Duration
+#####################
+both_vol = short_dur * low_flow
+# 28 gal/day
+both_save = current_daily_vol - both_vol
 # saving 14 gal/day
 
-plt.hist(df_shower['Duration(min)'])
+# Plotting
+#####################
+Scenario = ['Current Showering', 'Shorter Showers', 'Ultra Low Flow', 'Shorter and Low Flow']
+Volume = [current_daily_vol, short_dur_vol, low_flow_vol, both_vol]
+
+colors = [plt.cm.Spectral(i/float(len(Labels)-1)) for i in range(len(Labels))]
+width = 0.75
+# Bars
+p1 = plt.bar(Scenario, Volume, bottom=0, color=colors[0], width=width)
+# Volume annotations
+for i in range(len(Volume)):
+    plt.annotate('{:.0f}'.format(Volume[i]) + ' gal', xy=(i, Volume[i] + 1), rotation=0, color='k', ha='center', va='center', alpha=0.7, fontsize=9)
+# Extras
+plt.ylabel('Volume (gal)')
+plt.title('Shower Scenario Volumes')
+plt.show()
 
