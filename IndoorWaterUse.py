@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 #####################
 
 # Import Classified/Labeled Event Data
@@ -27,24 +26,30 @@ df_hr_vol = pd.pivot_table(df_grouped, values='Volume_tot', index=['Hour'], colu
 df_hr_vol = df_hr_vol[['irrigation', 'hose', 'shower', 'toilet', 'clothwasher', 'faucet']]
 # Subset indoor use
 df_hr_vol = df_hr_vol.drop(columns=['irrigation', 'hose'], index=[0, 3, 4, 5, 6])
-df_hr_vol = df_hr_vol.rename(columns={'shower': 'Shower', 'toilet': 'Toilet', 'clothwasher': 'Clothes Washer', 'faucet': 'Faucet'})
-
+df_hr_vol = df_hr_vol.rename(columns={'shower': 'Shower', 'toilet':'Toilet', 'clothwasher': 'Clothes Washer', 'faucet': 'Faucet'})
 
 # Plot Hourly Indoor Uses
 #####################
-Labels = list(df_hr_vol.columns)
-colors = [plt.cm.Spectral(i/float(len(Labels)-1)) for i in range(len(Labels))]
+fig = plt.figure(figsize=(8, 4))
+ax = fig.add_subplot(1, 1, 1)
+labels = list(df_hr_vol.columns)
+colors = ['#0F2080', '#85C0F9', '#F5793A', '#A95AA1']
 N = len(df_hr_vol)
 bottom = np.zeros(N)
-width = 0.5
-for elem, color in zip(Labels, colors):
-    plt.bar(df_hr_vol.index, df_hr_vol[elem], bottom=bottom, color=color, width=width)
+width = 0.95
+h = []
+for elem, color in zip(labels, colors):
+    ax.bar(df_hr_vol.index, df_hr_vol[elem], bottom=bottom, color=color, width=width, edgecolor='w', label=elem)
     bottom += df_hr_vol[elem]
 plt.ylabel('Volume (gal)')
+plt.xticks(df_hr_vol.index)
 plt.xlabel('Hour of Day')
 plt.title('Indoor Hourly Water Use')
-plt.xticks(df_hr_vol.index)
-plt.legend(Labels)
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles[::-1], labels[::-1], frameon=False)
+ax.spines['right'].set_visible(False)
+ax.spines['top'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
 plt.show()
 
 # Plot Hourly Shower Durations
