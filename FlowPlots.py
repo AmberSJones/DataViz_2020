@@ -1,3 +1,12 @@
+##########################################
+# Daily Flow Plots
+##########################################
+# Created by: Amber Jones
+# Date: 3 Dec 2020
+# This script plots flow diagrams (Sankey plots) for the in/out of water flows on a daily basis.
+# The script imports labeled event data, groups according to labels, divides into daily averages, and classifies as indoor/outdoor.
+# Flow plots are made for overall water use and indoor. Indoor is created separately because of variation in scale.
+
 # Import Libraries
 #####################
 import pandas as pd
@@ -34,7 +43,7 @@ df_indoor_flows.iloc[4, 0] = 'Indoor'
 # Overall
 flows = df_in_out_flows['Daily Volume']
 labels = df_in_out_flows['Label']
-color = '#255e7e'
+color = '#346888'
 fig = plt.figure(figsize=(8, 10))
 ax = fig.add_subplot(2, 1, 1)
 ax.axis('off')
@@ -42,13 +51,12 @@ in_out_flows = Sankey(ax=ax, head_angle=120, unit=' gal', scale=1/1751, offset=0
 in_out_flows.add(flows=flows, labels=labels, orientations=[-1, 0, 0], pathlengths=[0.25, 1, 1.5],
                  trunklength=0.5, facecolor=color, linewidth=1, patchlabel='Total Daily Water Use')
 diagrams = in_out_flows.finish()
-plt.title('Daily Water Use')
+plt.title('Daily Water Use', fontsize=16)
 
 # Indoor
 flows = df_indoor_flows['daily']
 labels = df_indoor_flows['Label']
-color = plt.cm.ocean(175)
-color= '#a3cbe5'
+color = '#94bed9'
 ax = fig.add_subplot(2, 1, 2)
 ax.axis('off')
 indoor_flows = Sankey(ax=ax, head_angle=120, unit=' gal', scale=1/130, offset=0.3, margin=0.2, shoulder=0.1,)
@@ -56,3 +64,8 @@ indoor_flows.add(flows=flows, labels=labels, orientations=[0, -1, 1, -1, 1], pat
                  trunklength=1.5, facecolor=color, linewidth=1, patchlabel='Indoor Daily Water Use')
 diagrams = indoor_flows.finish()
 plt.show()
+
+# to save
+plt.savefig('flowplots.png', bbox_inches='tight')
+
+##########################################

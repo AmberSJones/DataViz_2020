@@ -1,3 +1,17 @@
+##########################################
+# Irrigation Cost Scenarios
+##########################################
+# Created by: Amber Jones
+# Date: 3 Dec 2020
+# This script focuses on outdoor/irrigation/sprinkler watering including several watering/irrigation scenarios.
+# Hose use is also an outdoor use, but is disregarded for this analysis.
+# The script imports labeled event data, groups by label, determines average daily and monthly volumes.
+# Scenario 1: Reduce irrigation rate. Uses 1 inch/week recommendation.
+# Scenario 2: Reduce irrigated area. Uses half of currently irrigated area.
+# Scenario 3: Reduce both rate and area.
+# All of these are compared to the current.
+# Pricing for each scenario was also determined based on Providence City tiered rates.
+
 # Import Libraries
 #####################
 import pandas as pd
@@ -20,35 +34,41 @@ df = df.reindex([3, 2, 5, 4, 0, 1])
 df['daily'] = (df['Volume(gal)']/14).astype(int)
 df['monthly'] = df['daily'] * 30
 
+#####################
 # Irrigation scenarios
 #####################
-# Reduce irrigation volume
+
+# Reduce irrigation rate
+#####################
 # Recommended irrigation for turfgrass: 1 inch water = 27154 gallons/acre
 # (see https://www.lowes.com/n/how-to/watering-tips)
 lot_size = 0.28
-lot_fraction = 2/3 # removing house and paved
-one_inch = 27154 # gallons/acre per week
+lot_fraction = 2/3  # removing house and paved
+one_inch = 27154  # gallons/acre per week
 reduce_watering = one_inch * lot_size * lot_fraction * 30/7
 # 27154 * 0.28 * 2/3 * (30 days/month) / (7 days/week) = 21723 gallons/month
-current = df['monthly'][df['Label'] == 'irrigation'].sum()  # monthly water use undercurrent scenario
-current_inches = current*7/30*1/lot_fraction*1/lot_size*1/one_inch # weekly watering depth under current scenario
+# Comaparing to the current practice
+current = df['monthly'][df['Label'] == 'irrigation'].sum()  # monthly water use under current scenario
+current_inches = current*7/30*1/lot_fraction*1/lot_size*1/one_inch  # weekly watering depth under current scenario
 # 47340 * 7/30 * 3/2 * 1/0.28 *1/27154 = 2.18 inches/week
 
 # Reduce irrigated area
+#####################
 lot_reduce = 0.5
 reduce_lawn = current * lot_reduce
 reduce_both = one_inch * lot_size * lot_fraction * lot_reduce * 30/7
 # 27154 gallons/acre 0.28*2/3*0.5 acres = 2534.5 gal is 1 inch of water
 # 27154 * 0.28 * 2/3 * 30/7 * 0.5 = 10862 gallons/month
 
-indoor = df['monthly'][df['Label'] != 'irrigation'].sum()
-
 # Define scenarios
+#####################
 Labels = ['Sprinklers', 'Indoor']
 Scenario = ['Current Watering', 'Reduce Lawn', 'Reduce Watering', 'Reduce Both']
+indoor = df['monthly'][df['Label'] != 'irrigation'].sum()
 Indoor = [indoor, indoor, indoor, indoor]
 Sprinklers = [current, reduce_lawn, reduce_watering, reduce_both]
 
+#####################
 # Pricing
 #####################
 # Providence City water rate tiers:
@@ -70,13 +90,17 @@ pricing['FirstTierCost'] = pricing['FirstTier']*rate_tier1/1000
 pricing['SecondTierCost'] = pricing['SecondTier']*rate_tier2/1000
 pricing['TotalCost'] = pricing['FirstTierCost'] + pricing['SecondTierCost'] + flat_rate
 
+#####################
 # Plotting
 #####################
+# Creates a stacked bar chart with indoor use remaining constant and sprinkler use varying for each scenario.
+# Includes annotations for each pricing tier.
+
 fig = plt.figure(figsize=(8, 5))
 ax = fig.add_subplot(1, 1, 1)
 
 outdoor_color = '#346888'
-indoor_color = '#F5793A'
+indoor_color = '#94bed9'
 width = 0.95
 
 # Bars
@@ -92,10 +116,10 @@ p4 = ax.axhline(y=tier2, linewidth=1.5, linestyle='--', color='k')
 # Cost and volume annotations
 for i, rows in pricing.iterrows():
     ax.annotate('{:,.0f}'.format(rows['Total']) + ' gal', xy=(i, rows['Total']+1000),
-                 rotation=0, color='k', ha='center', va='center', alpha=0.7, fontsize=9)
+                rotation=0, color='k', ha='center', va='center', alpha=0.7, fontsize=9)
     ax.annotate('${:,.2f}'.format(rows['TotalCost']), xy=(i, 13000),
-                 rotation=0, color='k', ha='center', va='center', fontsize=10, fontweight='bold',
-                 bbox=dict(boxstyle='square', fc='white', linewidth=0))
+                rotation=0, color='k', ha='center', va='center', fontsize=10, fontweight='bold',
+                bbox=dict(boxstyle='square', fc='white', linewidth=0))
 
 # Brackets for Rate Ranges
 x1 = 3.65
@@ -114,11 +138,16 @@ ax.annotate(' $1.50/\n1000gal', xy=(x1, 52600), xytext=(x2, 52600), annotation_c
             arrowprops=dict(arrowstyle='-[, widthB=1.25, lengthB=0.9', lw=1))
 
 # Extras
-plt.ylabel('Monthly Volume (gal)')
-plt.title('Summer Season Monthly Water Use and Cost')
 ax.legend((p1, p2), Labels, loc='center right', ncol=1, frameon=False)
 ax.spines['right'].set_visible(False)
 ax.spines['top'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
+ax.tick_params(top=False, bottom=False, left=True, right=False, labelleft=True, labelbottom=True)
+plt.ylabel('Monthly Volume (gal)')
+plt.title('Summer Season Monthly Water Use and Cost')
 plt.show()
 
+# to save
+plt.savefig('outdoor_scenarios.png', bbox_inches='tight')
+
+##########################################
