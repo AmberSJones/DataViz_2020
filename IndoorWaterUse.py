@@ -1,5 +1,5 @@
 ##########################################
-# Irrigation Cost Scenarios
+# Indoor Water Use
 ##########################################
 # Created by: Amber Jones
 # Date: 3 Dec 2020
@@ -19,6 +19,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 #####################
 
 # Import Classified/Labeled Event Data
@@ -31,7 +32,7 @@ df_events = pd.read_csv('Classified_Events.csv', engine='python', header=0, pars
 
 # Organize Data
 #####################
-# get indoor data, group and label
+# get indoor data, aggregate and label
 df_indoor_events = df_events[(df_events.Label != 'irrigation') & (df_events.Label != 'hose')]
 df_indoor_grouped = df_indoor_events.groupby(['Label'], as_index=False).agg({'Volume(gal)': np.sum, 'Duration(min)': ['mean', 'min', 'max']})
 df_indoor_grouped.columns = ['Label', 'Volume_tot', 'Duration_mean', 'Duration_min', 'Duration_max']
@@ -42,13 +43,15 @@ df_indoor_grouped['Label'] = ['Faucet', 'Clothes\nWasher', 'Shower', 'Toilet']
 #####################
 # this could also be done for volume ranges.
 # this is similar to violin or boxplot but removes the frequency element for simplicity.
-fig = plt.figure(figsize=(8, 4))
-ax = fig.add_subplot(1, 1, 1)
+fig1 = plt.figure(figsize=(8, 4))
+ax = fig1.add_subplot(1, 1, 1)
 colors = ['#004c6d', '#6996b3', '#F5793A', '#A95AA1']
+# plot horizontal lines and points for min, max, mean
 ax.hlines(y=df_indoor_grouped['Label'], xmin=df_indoor_grouped['Duration_min'], xmax=df_indoor_grouped['Duration_max'], color=colors[0], alpha=0.7)
 ax.scatter(df_indoor_grouped['Duration_min'], df_indoor_grouped['Label'], color=colors[3], alpha=0.8, label='Minimum')
 ax.scatter(df_indoor_grouped['Duration_mean'], df_indoor_grouped['Label'], marker='P', s=70, color=colors[1], label='Average')
 ax.scatter(df_indoor_grouped['Duration_max'], df_indoor_grouped['Label'], color=colors[2], alpha=0.8, label='Maximum')
+# additional styling
 ax.spines['right'].set_visible(False)
 ax.spines['top'].set_visible(False)
 ax.spines['left'].set_visible(False)
@@ -60,7 +63,7 @@ plt.xlabel('Duration (min)')
 plt.title('Variation in Duration for Indoor Uses')
 
 # to save
-plt.savefig('indoor_durations.png', bbox_inches='tight')
+plt.savefig('Images/indoor_durations.png', bbox_inches='tight')
 
 #####################
 # Hourly Aggregation
@@ -83,18 +86,21 @@ df_hr_vol = df_hr_vol.rename(columns={'shower': 'Shower', 'toilet':'Toilet', 'cl
 
 # Plot Hourly Indoor Uses
 #####################
-fig = plt.figure(figsize=(8, 4))
-ax = fig.add_subplot(1, 1, 1)
+fig2 = plt.figure(figsize=(8, 4))
+ax = fig2.add_subplot(1, 1, 1)
 labels = list(df_hr_vol.columns)
 colors = ['#004c6d', '#6996b3', '#F5793A', '#A95AA1']
 N = len(df_hr_vol)
 bottom = np.zeros(N)
 width = 0.95
+# create bars
 for elem, color in zip(labels, colors):
     ax.bar(df_hr_vol.index, df_hr_vol[elem], bottom=bottom, color=color, width=width, edgecolor='w', label=elem)
     bottom += df_hr_vol[elem]
+# reorder legend labels to match stacked bars
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles[::-1], labels[::-1], frameon=False)
+# additional styling
 ax.spines['right'].set_visible(False)
 ax.spines['top'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
@@ -106,7 +112,7 @@ plt.title('Indoor Hourly Water Use')
 plt.show()
 
 # to save
-plt.savefig('indoor_volumes.png', bbox_inches='tight')
+plt.savefig('Images/indoor_volumes.png', bbox_inches='tight')
 
 # Plot Hourly Shower Durations
 #####################
@@ -114,8 +120,8 @@ plt.savefig('indoor_volumes.png', bbox_inches='tight')
 # this is similar to violin or boxplot but removes the frequency element for simplicity.
 df_hr_shower = df_grouped[df_grouped['Label'] == 'shower']
 
-fig = plt.figure(figsize=(8, 4))
-ax = fig.add_subplot(1, 1, 1)
+fig3 = plt.figure(figsize=(8, 4))
+ax = fig3.add_subplot(1, 1, 1)
 colors = ['#004c6d', '#6996b3', '#F5793A', '#A95AA1']
 ax.vlines(x=df_hr_shower['Hour'], ymin=df_hr_shower['Duration_min'], ymax=df_hr_shower['Duration_max'], color=colors[0], alpha=0.7)
 ax.scatter(df_hr_shower['Hour'], df_hr_shower['Duration_max'], color=colors[2], alpha=0.8, label='Maximum')
@@ -135,7 +141,7 @@ plt.xlabel('Hour of Day')
 plt.title('Hourly Range of Shower Durations')
 
 # to save
-plt.savefig('shower_durations.png', bbox_inches='tight')
+plt.savefig('Images/shower_durations.png', bbox_inches='tight')
 
 #####################
 # Shower Scenarios
@@ -180,12 +186,13 @@ both_save = current_daily_vol - both_vol
 
 # Plotting
 #####################
-# this is analogous to the bathtub illustration
+# inputs
 Scenario = ['Current Showering', 'Shorter Showers', 'Ultra Low Flow', 'Shorter and Low Flow']
 Volume = [current_daily_vol, short_dur_vol, low_flow_vol, both_vol]
 
-fig = plt.figure(figsize=(8, 5))
-ax = fig.add_subplot(1, 1, 1)
+# plots a bar chart
+fig4 = plt.figure(figsize=(8, 5))
+ax = fig4.add_subplot(1, 1, 1)
 colors = ['#004c6d', '#3d708f', '#75a1be', '#94bed9']
 width = 0.95
 # Bars
@@ -193,7 +200,7 @@ p1 = plt.bar(Scenario, Volume, bottom=0, color=colors, width=width, edgecolor='w
 # Volume annotations
 for i in range(len(Volume)):
     plt.annotate('{:.0f}'.format(Volume[i]) + ' gal', xy=(i, Volume[i] + 1), rotation=0, color='k', ha='center', va='center', alpha=0.7, fontsize=9)
-# Extras
+# Styling
 ax.spines['right'].set_visible(False)
 ax.spines['top'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
@@ -203,7 +210,41 @@ plt.title('Shower Scenario Daily Volumes')
 plt.show()
 
 # to save
-plt.savefig('shower_scenarios.png', bbox_inches='tight')
+plt.savefig('Images/shower_scenarios.png', bbox_inches='tight')
+
+
+# plots an analogous bathtub image
+Labels = ['Currently using ' + str(current_daily_vol.astype(int)) + ' gal/day',
+          'Shorter Showers save ' + str((current_daily_vol - short_dur_vol).astype(int)) +' gal/day',
+          'Low Flows save ' + str((current_daily_vol - low_flow_vol).astype(int)) +' gal/day',
+          'Both save ' + str((current_daily_vol - both_vol).astype(int)) +' gal/day']
+colors = ['#00354d', '#25556e', '#457891', '#659cb5']
+# read in bathtub image
+img = plt.imread("TubEmpty.png")
+fig5 = plt.figure(figsize=(8, 5))
+ax = fig5.add_subplot(1, 1, 1)
+ax.axis('off')
+# to get wavy lines
+rcParams['path.sketch'] = (1, 100, 2)
+# lines and labels
+for i in range(len(Volume)):
+    ax.plot(np.linspace(3.5, 114.5, 1000), [Volume[i]] * 1000, color=colors[i], linewidth=3)
+    plt.text(x=120, y=Volume[i], s=Labels[i],
+             fontweight='bold', color=colors[i], fontname='Arial Narrow', va='center',fontsize=12)
+ax.imshow(img, extent=[0, 140, 0, 108])
+# Standard tub size annotation with arrow
+ax.annotate('Standard\ntub size', xy=(3, 42), xytext=(-5, 42), annotation_clip=False, rotation=0,
+            fontsize=9, ha='right', va='center', fontname='Arial Narrow', color='gray', fontweight='bold',
+            arrowprops=dict(arrowstyle='simple', mutation_scale=22, facecolor='gray', edgecolor='w'),
+            horizontalalignment='right', verticalalignment='top',
+            )
+# for simple straight lines:
+# ax.hlines(y=Volume, xmin=3, xmax=115, linewidth=1.5, linestyle='--', color=colors)
+# reset to remove the wavy line setting
+rcParams['path.sketch'] = (0, 0, 0)
+
+# to save
+plt.savefig('Images/tub_illustration.png', bbox_inches='tight')
 
 ##########################################
 

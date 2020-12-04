@@ -12,7 +12,7 @@ from pywaffle import Waffle
 
 # Import Classified/Labeled Event Data
 #####################
-df_events = pd.read_csv('Classified_Events.csv', engine='python', header=0, parse_dates=True, infer_datetime_format=True)
+df_events = pd.read_csv('../Classified_Events.csv', engine='python', header=0, parse_dates=True, infer_datetime_format=True)
 
 #####################
 # Treemaps

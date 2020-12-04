@@ -17,6 +17,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 #####################
 
 # Import Classified/Labeled Event Data
@@ -60,7 +61,7 @@ reduce_both = one_inch * lot_size * lot_fraction * lot_reduce * 30/7
 # 27154 gallons/acre 0.28*2/3*0.5 acres = 2534.5 gal is 1 inch of water
 # 27154 * 0.28 * 2/3 * 30/7 * 0.5 = 10862 gallons/month
 
-# Define scenarios
+# Define datasets
 #####################
 Labels = ['Sprinklers', 'Indoor']
 Scenario = ['Current Watering', 'Reduce Lawn', 'Reduce Watering', 'Reduce Both']
@@ -93,11 +94,14 @@ pricing['TotalCost'] = pricing['FirstTierCost'] + pricing['SecondTierCost'] + fl
 #####################
 # Plotting
 #####################
+
+# Bar chart
+#####################
 # Creates a stacked bar chart with indoor use remaining constant and sprinkler use varying for each scenario.
 # Includes annotations for each pricing tier.
 
-fig = plt.figure(figsize=(8, 5))
-ax = fig.add_subplot(1, 1, 1)
+fig1 = plt.figure(figsize=(8, 5))
+ax = fig1.add_subplot(1, 1, 1)
 
 outdoor_color = '#346888'
 indoor_color = '#94bed9'
@@ -148,6 +152,40 @@ plt.title('Summer Season Monthly Water Use and Cost')
 plt.show()
 
 # to save
-plt.savefig('outdoor_scenarios.png', bbox_inches='tight')
+plt.savefig('Images/outdoor_scenarios.png', bbox_inches='tight')
+
+# Illustrations
+#####################
+# Creates an illustration of a reduced lot size with labels for irrigated area
+fig2 = plt.figure(figsize=(7, 9))
+fig2.subplots_adjust(hspace=0, wspace=0)
+ax = fig2.add_subplot(2, 1, 1)
+img = plt.imread('house.png')
+ax.imshow(img, extent=[0, 170, 0, 110])
+ax.axis('off')
+plt.text(x=47.5, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction) + ' acres',
+         fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=12)
+plt.text(x=140, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction * lot_reduce) + ' acres',
+         fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=12)
+
+# Creates an illustration grass comparing weekly watering rates
+ax = fig2.add_subplot(2, 1, 2)
+img = plt.imread("grass.png")
+ax.imshow(img, extent=[0, 170, 0, 110])
+ax.axis('off')
+# Create a Rectangle patch and add to axes
+rect = patches.Rectangle((3.28, 54.5), 80.15, (25*(current_inches-1)), linewidth=1, edgecolor='#2F5597', facecolor='#2F5597')
+ax.add_patch(rect)
+plt.text(x=26, y=45+(25*(current_inches-1)), s='{:,.2f}'.format(current_inches) + ' inches/week', fontweight='bold', color='w', fontname='Arial Narrow', va='bottom',
+         fontsize=13, alpha=0.8)
+plt.text(x=25, y=55+(25*(current_inches-1)), s='Currently watering', fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom',
+        fontsize=13)
+plt.text(x=112, y=45, s='1 inch/week', fontweight='bold', color='w', fontname='Arial Narrow', va='bottom',
+         fontsize=13, alpha=0.8)
+plt.text(x=97, y=55, s='Recommended watering', fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom',
+        fontsize=13)
+
+# to save
+plt.savefig('Images/outdoor_illustration.png', bbox_inches='tight')
 
 ##########################################

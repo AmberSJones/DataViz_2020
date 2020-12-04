@@ -20,6 +20,7 @@ df_events = pd.read_csv('Classified_Events.csv', engine='python', header=0, pars
 
 # Organize data as in/out flows
 #####################
+# Aggregate all events by use
 df_flows = df_events.groupby('Label', as_index=False)['Volume(gal)'].sum().sort_values('Volume(gal)', ascending=False)
 # Daily averages
 df_flows['daily'] = (df_flows['Volume(gal)']/14).astype(int)
@@ -39,12 +40,16 @@ df_indoor_flows.iloc[4, 0] = 'Indoor'
 
 # Daily Flow Plots
 #####################
+# plots 2 subplots: one for overall split between outdoor and indoor, another for indoor uses.
 
 # Overall
+# input data
 flows = df_in_out_flows['Daily Volume']
 labels = df_in_out_flows['Label']
 color = '#346888'
+# plotting
 fig = plt.figure(figsize=(8, 10))
+fig.subplots_adjust(hspace=0.001, wspace=0.001)
 ax = fig.add_subplot(2, 1, 1)
 ax.axis('off')
 in_out_flows = Sankey(ax=ax, head_angle=120, unit=' gal', scale=1/1751, offset=0.25, margin=0.2, shoulder=0.1,)
@@ -54,9 +59,11 @@ diagrams = in_out_flows.finish()
 plt.title('Daily Water Use', fontsize=16)
 
 # Indoor
+# input data
 flows = df_indoor_flows['daily']
 labels = df_indoor_flows['Label']
 color = '#94bed9'
+# plotting
 ax = fig.add_subplot(2, 1, 2)
 ax.axis('off')
 indoor_flows = Sankey(ax=ax, head_angle=120, unit=' gal', scale=1/130, offset=0.3, margin=0.2, shoulder=0.1,)
@@ -66,6 +73,6 @@ diagrams = indoor_flows.finish()
 plt.show()
 
 # to save
-plt.savefig('flowplots.png', bbox_inches='tight')
+plt.savefig('Images/flowplots.png', bbox_inches='tight')
 
 ##########################################
