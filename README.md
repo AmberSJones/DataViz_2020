@@ -77,4 +77,4 @@ The water used by each shower scenario is visualized in a bar chart. Each bar re
 
 ![showerscenarios](/Images/shower_scenarios.png)
 
-Both visualizations illustrate the water conservation potential of enforcing shorter showers and using a low flow fixture. For this household, the average daily shower volume was equivalent to a full bathtub (42 gallons). Implementing both of these practics would save 18 gallons/day.
+Both visualizations illustrate the water conservation potential of enforcing shorter showers and using a low flow fixture. For this household, the average daily shower volume was equivalent to a full bathtub (42 gallons). Implementing both of these practics would save 18 gallons/day (43%).
