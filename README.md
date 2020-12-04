@@ -10,7 +10,7 @@ The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.p
 Input for all of these scripts is a comma separated values files of classified and labeled household water use events. Each row corresponds to a water use event. Required columns are StartTime, Label, Volume, and Duration. The input file supplied for the challenge contained data for a single household in Providence City, UT for 2 weeks during the summer. The code is specific to category label in this file (irrigation, hose, toilet, shower, faucet, clothwasher), but could be repurposed for other categories or labels.
 
 ## Overall Water Use
-The flow plots script imports data, aggregates all events by category, and determines daily averages. Data are further organized as in/out flows for plotting. Two plots are constructed and put together for a single visualization: one to illustrate the split between indoor and outdoor use, and another to show the proportions of indoor use. A separate plot is used for indoor because, for the timeframe for this example, outdoor water use overshadowed indoor use. All numbers in the plots are daily averages.
+The FlowPlots script imports data, aggregates all events by category, and determines daily averages. Data are further organized as in/out flows for plotting. Two plots are constructed and put together for a single visualization: one to illustrate the split between indoor and outdoor use, and another to show the proportions of indoor use. A separate plot is used for indoor because, for the timeframe for this example, outdoor water use overshadowed indoor use. All numbers in the plots are daily averages.
 
 ![flowplots](/Images/flowplots.png)
 
