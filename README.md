@@ -5,7 +5,7 @@ By monitoring household water use with smart sensors and associated algorithms, 
 This repository was created December 2020 as a submission for a [data visualization challenge](https://github.com/UCHIC/CIWS-VisChallenge/) sponsored by the Cyberinfrastructure for Intelligent Water Systems Research Group at Utah State University.
 
 ## Overview and Input Data
-The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.py, and IndoorWaterUse.py, each of which are described below. FlowPlots provides an overview of water use, IrrigationCostScenarios focuses on outdoor water use and cost, and IndoorWaterUse examines categories and timing of indoor water use.
+The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.py, and IndoorWaterUse.py. FlowPlots provides an overview of water use, IrrigationCostScenarios focuses on outdoor water use and cost, and IndoorWaterUse examines categories and timing of indoor water use.
 
 Input data for all of these scripts is a comma separated values files of classified and labeled water use events. Each row corresponds to a water use event. Required columns are StartTime, Label, Volume, and Duration. The input file supplied for the challenge contained data for a single household in Providence City, UT for 2 weeks during the summer.
 
