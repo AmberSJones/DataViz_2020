@@ -2,7 +2,7 @@
 
 By monitoring household water use with smart sensors and associated algorithms, homeowners, residents, and utilities can better understand not only the quantity of water used, but how and when the water is used. Increased information can help target uses and times for water conservation and cost savings. This repository contains code and images for visualizing water use for a single household. The overall water use is considered along with separate focus on outdoor and indoor uses. Several scenarios are presented as potential opportunities for water conservation. While these graphics correspond to a single, specific household, the code should be generalizable to any home with a smart water sensor and categorized use data.
 
-This repository was created December 2020 as a submission for a [data visualization challenge](https://github.com/UCHIC/CIWS-VisChallenge/) sponsored by the Cyberinfrastructure for Intelligent Water Systems Research Group.
+This repository was created December 2020 as a submission for a [data visualization challenge](https://github.com/UCHIC/CIWS-VisChallenge/) sponsored by the Cyberinfrastructure for Intelligent Water Systems Research Group at Utah State University.
 
 ## Overview and Input Data
 The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.py, and IndoorWaterUse.py, each of which are described below. FlowPlots provides an overview of water use, IrrigationCostScenarios focuses on outdoor water use and cost, and IndoorWaterUse examines categories and timing of indoor water use.
