@@ -64,7 +64,7 @@ This plot shows that xx and xx are hours when relatively lengthy showers are occ
 ### Shower Scenarios
 As shown by the previous visualizations, shower events are the best opportunity for reducing indoor water use. Three scenarios are considered:
 1. Reduce Shower Duration: A maximum shower duration is set. For this case, 10 minutes was selected as a maximum shower length. Any showers over 10 minutes are set to 10 minutes and the total daily volume determined.
-2. Ultra Low Flow: There is a wide range of low flow fixtures available to consumers. This scenario sets a low flow rate and determines total daily volume used for the shower events in the dataset. Low flow fixtures can impose conservation when shorter showers are not welcomed by household members. (Note that for this household, the average flow rate was 1.88 gpm, which is considered within the range of low flow. Recent technology reports an effective flow rate of 1.26.)
+2. Ultra Low Flow: There is a wide range of low flow fixtures available to consumers. This scenario sets a low flow rate and determines total daily volume used for the shower events in the dataset. Low flow fixtures can impose conservation when shorter showers are not welcomed by household members. (Note that for this household, the average flow rate was 1.88 gpm, which is considered within the range of low flow. Recent innovations in shower fixtures [reportedly output](https://nebia.com/collections) 1.26 gpm.)
 3. Both: A final scenario implements both shorter showers and a reduced shower flow rate. 
 
 ### Plots and Illustrations
@@ -72,18 +72,4 @@ The water used by each shower scenario is visualized in a bar chart. Each bar re
 
 ![showerscenarios](/Images/shower_scenarios.png)
 
-![tub illustration](/Images/Tub_illustration.png)
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
+![tub illustration](/Images/tub_illustration.png)

@@ -49,7 +49,7 @@ labels = df_in_out_flows['Label']
 color = '#346888'
 # plotting
 fig = plt.figure(figsize=(8, 10))
-fig.subplots_adjust(hspace=0.001, wspace=0.001)
+fig.subplots_adjust(hspace=0.05, wspace=0.05)
 ax = fig.add_subplot(2, 1, 1)
 ax.axis('off')
 in_out_flows = Sankey(ax=ax, head_angle=120, unit=' gal', scale=1/1751, offset=0.25, margin=0.2, shoulder=0.1,)

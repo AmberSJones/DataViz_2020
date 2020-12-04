@@ -160,7 +160,7 @@ plt.savefig('Images/outdoor_scenarios.png', bbox_inches='tight')
 fig2 = plt.figure(figsize=(7, 9))
 fig2.subplots_adjust(hspace=0, wspace=0)
 ax = fig2.add_subplot(2, 1, 1)
-img = plt.imread('house.png')
+img = plt.imread('Images/house.png')
 ax.imshow(img, extent=[0, 170, 0, 110])
 ax.axis('off')
 plt.text(x=47.5, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction) + ' acres',
@@ -170,7 +170,7 @@ plt.text(x=140, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction * lot_reduce
 
 # Creates an illustration grass comparing weekly watering rates
 ax = fig2.add_subplot(2, 1, 2)
-img = plt.imread("grass.png")
+img = plt.imread("Images/grass.png")
 ax.imshow(img, extent=[0, 170, 0, 110])
 ax.axis('off')
 # Create a Rectangle patch and add to axes

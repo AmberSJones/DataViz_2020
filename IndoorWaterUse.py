@@ -220,7 +220,7 @@ Labels = ['Currently using ' + str(current_daily_vol.astype(int)) + ' gal/day',
           'Both save ' + str((current_daily_vol - both_vol).astype(int)) +' gal/day']
 colors = ['#00354d', '#25556e', '#457891', '#659cb5']
 # read in bathtub image
-img = plt.imread("TubEmpty.png")
+img = plt.imread('Images/TubEmpty.png')
 fig5 = plt.figure(figsize=(8, 5))
 ax = fig5.add_subplot(1, 1, 1)
 ax.axis('off')
