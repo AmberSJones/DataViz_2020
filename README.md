@@ -4,10 +4,12 @@ By monitoring household water use with smart sensors and associated algorithms, 
 
 This repository was created December 2020 as a submission for a [data visualization challenge](https://github.com/UCHIC/CIWS-VisChallenge/) sponsored by the Cyberinfrastructure for Intelligent Water Systems Research Group at Utah State University.
 
-## Overview and Input Data
-The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.py, and IndoorWaterUse.py. FlowPlots provides an overview of water use, IrrigationCostScenarios focuses on outdoor water use and cost, and IndoorWaterUse examines categories and timing of indoor water use.
+## Code Structure and Input Data
+The code consists of three main scripts: FlowPlots.py, IrrigationCostScenarios.py, and IndoorWaterUse.py. FlowPlots provides an overview of water use, IrrigationCostScenarios focuses on outdoor water use and cost, and IndoorWaterUse examines categories and timing of indoor water use. Each script can be run independently.
 
-Input for all of these scripts is a comma separated values files of classified and labeled household water use events. Each row corresponds to a water use event. Required columns are StartTime, Label, Volume, and Duration. The input file supplied for the challenge contained data for a single household in Providence City, UT for 2 weeks during the summer. The code is specific to category label in this file (irrigation, hose, toilet, shower, faucet, clothwasher), but could be repurposed for other categories or labels.
+Input for all of these scripts is a comma separated values files of classified and labeled household water use events. Each row corresponds to a water use event. Required columns are StartTime, Label, Volume, and Duration. The input file supplied for the challenge contained data for a single household in Providence City, UT for 2 weeks during the summer. The code is specific to category labels in this file (irrigation, hose, toilet, shower, faucet, clothwasher), but could be repurposed for other categories or labels.
+
+Input data is found in the same root directory as the scripts. Background images that are imported into illustrated visualizations are located in the Images folder along with saved versions of script outputs. Power Point software was use to create and export the backgrounds, and associated files are in the BackgroundCreation folder.
 
 ## Overall Water Use
 The FlowPlots script imports data, aggregates all events by category, and determines daily averages. Data are further organized as in/out flows for plotting. Two plots are constructed and put together for a single visualization: one to illustrate the split between indoor and outdoor use, and another to show the proportions of indoor use. A separate plot is used for indoor because, for the timeframe for this example, outdoor water use overshadowed indoor use. All numbers in the plots are daily averages.
