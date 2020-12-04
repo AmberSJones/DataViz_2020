@@ -2,6 +2,8 @@
 
 By monitoring household water use with smart sensors and associated algorithms, homeowners, residents, and utilities can better understand not only the quantity of water used, but how and when the water is used. Increased information can help target uses and times for water conservation and cost savings. This repository contains code and images for visualizing water use for a single household. The overall water use is considered along with separate focus on outdoor and indoor uses. Several scenarios are presented as potential opportunities for water conservation. While these graphics correspond to a single, specific household, the code should be generalizable to any home with a smart water sensor and categorized use data.
 
+These visualizations are designed for presentation to consumers, and could be compiled into a report with portions of and variations of the explanatory text included for each below visualization. 
+
 This repository was created December 2020 as a submission for a [data visualization challenge](https://github.com/UCHIC/CIWS-VisChallenge/) sponsored by the Cyberinfrastructure for Intelligent Water Systems Research Group at Utah State University.
 
 ## Code Structure and Input Data
