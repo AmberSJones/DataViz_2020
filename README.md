@@ -14,22 +14,23 @@ The FlowPlots script imports data, aggregates all events by category, and determ
 
 ![flowplots](/Images/flowplots.png)
 
-As shown here, a vast majority of water used by the household in this period goes to outdoor uses - generally irrigation of turfgrass by automated sprinkler system along with a relatively small amount of hose use. Indoors, toilet flushes and showers consume the most water, with some faucet and clothes washer. Note that 'faucet' includes sink use and automatic dishwashing.
+As shown here, a vast majority of water used by the household in this period goes to outdoor uses - generally irrigation of turfgrass by automated sprinkler system along with a relatively small amount of hose use. For the 130 gallons used indoor each day, toilet flushes and showers consume the most water, with some faucet and clothes washer. Note that 'faucet' includes both sink use and automatic dishwashing.
 
 ## Outdoor Water Use
-Because of the dominance of outdoor water use, possibilities for reduction are explored and compared to the current baseline. The IrrigationCostScenarios script determines monthly watering volume and cost for three scenarios (irrigation = sprinklers = watering.) Note that this analysis is really only applicable to the summer irrigation season.
+Because of the dominance of outdoor water use, possibilities for reduction are explored and compared to the current baseline. The IrrigationCostScenarios script determines monthly watering volume and cost for three scenarios. Note that this analysis is really only applicable to the summer irrigation season. (Also note that irrigation = sprinklers = watering.)
 
-###Scenarios
+### Scenarios
 Three scenarios are considered:
-1. Reducing the rate of irrigation: The need for watering depends on weather as well as soil type, so it can be difficult to broadly prescibe rates and a schedule. To conserve water, one [source](https://www.lowes.com/n/how-to/watering-tips) recommends 1 inch of water per week. The script determines the monthly water use for 1 inch/week as well as the depth/week for the current baseline using the lot size and assuming that 2/3 of the lot area is watered (because of the house and paved surfaces). 
-2. Reducing the irrigated area: This scenario explores water use if the irrigated area were reduced by swapping turfgrass for xeriscaped plants and other elements that do not require watering. For this case, the irrigated area was reduced by half
-3. Both: A final scenario considers reducing both the rate of irrigation as well as the irrigated area.
+**1. Reducing the rate of irrigation:** The need for watering depends on weather as well as soil type, so it can be difficult to broadly prescibe rates and a schedule. To conserve water, a [general recommendation](https://www.lowes.com/n/how-to/watering-tips) is to water 1 inch of water per week. The script determines the monthly water use for 1 inch/week as well as the current depth/week using the given lot size and assuming a fraction of that acreage is watered (because of the house and paved surfaces). For this household, the lot size was 0.28 and the lot fraction was estimated as 2/3.
+**2. Reducing the irrigated area:** This scenario explores water use if the irrigated area were reduced by swapping turfgrass for xeriscaped plants and other landscaping elements that do not require watering. For this case, the irrigated area was reduced by half.
+**3. Both:** A final scenario considers reducing both the rate of irrigation and the irrigated area.
 
 ### Pricing
 The City of Providence, UT uses a tiered pricing structure to charge for water use with rates as follows: 
 - $23.25 for 10,000 gallons of water (flat rate).
 - $0.75 per 1,000 gallons from 10,001 to 50,000 gallons.
 - $1.50 per 1,000 gallons over 50,000 gallons.
+
 Using these rates, the pricing for each scenario was determined.
 
 ### Plots and Illustrations
