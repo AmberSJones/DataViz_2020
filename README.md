@@ -71,8 +71,8 @@ As shown by the previous visualizations, shower events are the best opportunity 
 ### Plots and Illustrations
 The water used by each shower scenario is visualized in a bar chart. Each bar represents total daily water use for each scenario. The same numbers are presented in an illustration with daily volumes shown as water depth scaled to a bathtub with the amount of water conserved labeled.
 
-![showerscenarios](/Images/shower_scenarios.png)
-
 ![tub illustration](/Images/tub_illustration.png)
+
+![showerscenarios](/Images/shower_scenarios.png)
 
 Both visualizations illustrate the water conservation potential of enforcing shorter showers and using a low flow fixture. For this household, the average daily shower volume was equivalent to a full bathtub (42 gallons). Implementing both of these practics would save 18 gallons/day.
