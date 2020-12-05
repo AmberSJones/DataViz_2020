@@ -219,7 +219,7 @@ plt.savefig('Images/shower_scenarios.png', bbox_inches='tight')
 
 # Bathtub Plot
 #####################
-Labels = ['Currently using ' + str(round(current_daily_vol)) + ' gal/day',
+Labels = ['Currently use ' + str(round(current_daily_vol)) + ' gal/day',
           'Shorter Showers use ' + str(round(short_dur_vol)) +' gal/day',
           'Low Flows use ' + str(round(low_flow_vol)) +' gal/day',
           'Both use ' + str(round(both_vol)) +' gal/day']
