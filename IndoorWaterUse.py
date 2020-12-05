@@ -267,7 +267,7 @@ ncol = max(savings)
 nrow = len(savings)
 
 # create plot
-fig6, ax = plt.subplots(nrows=rows, ncols=ncol, figsize=(ncol, nrow))
+fig6, ax = plt.subplots(nrows=rows, ncols=ncol, figsize=(ncol+1, nrow+1))
 # reduce spacing
 fig6.subplots_adjust(hspace=0.00, wspace=0.00)
 gs = gridspec.GridSpec(nrow, ncol,
@@ -284,13 +284,13 @@ for i, axi in enumerate(ax.flat):
         axi.imshow(img, alpha=0.95, extent=[0, 550, 0, 550])
 # add text
 ax[0][0].annotate(text[0], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
-            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[0], fontweight='bold',
+            fontsize=17, ha='right', va='center', fontname='Arial Narrow', color=colors[0], fontweight='bold',
             horizontalalignment='right', verticalalignment='top')
 ax[1][0].annotate(text[1], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
-            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[1], fontweight='bold',
+            fontsize=17, ha='right', va='center', fontname='Arial Narrow', color=colors[1], fontweight='bold',
             horizontalalignment='right', verticalalignment='top')
 ax[2][0].annotate(text[2], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
-            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[2], fontweight='bold',
+            fontsize=17, ha='right', va='center', fontname='Arial Narrow', color=colors[2], fontweight='bold',
             horizontalalignment='right', verticalalignment='top')
 fig6.suptitle('Shower Scenario Daily Savings')
 plt.show()
