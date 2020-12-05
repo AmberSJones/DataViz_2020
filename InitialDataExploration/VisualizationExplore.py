@@ -457,29 +457,44 @@ for i, rows in df.iterrows():
 
 
 
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
 
-#####################
+savings_labels = ['Shorter Showers', 'Ultra Low Flow', 'Shorter and Low Flow']
+savings = [round(current_daily_vol - short_dur_vol),
+           round(current_daily_vol - low_flow_vol),
+           round(current_daily_vol - both_vol)]
+text = ['Shorter Showers save\n' + str(savings[0]) +' gallons/day',
+          'Low Flows save\n' + str(savings[1]) +' gallons/day',
+          'Both save\n' + str(savings[2]) +' gallons/day']
+colors = ['#25556e', '#457891', '#659cb5']
+ncol = max(savings)
+nrow = len(savings)
 
+fig, ax = plt.subplots(nrows=rows, ncols=ncol, figsize=(ncol, nrow))
+fig.subplots_adjust(hspace=0.00, wspace=0.00)
+gs = gridspec.GridSpec(nrow, ncol,
+         wspace=0.0, hspace=0.0,
+         top=1.-0.5/(nrow+1), bottom=0.5/(nrow+1),
+         left=0.5/(ncol+1), right=1-0.5/(ncol+1))
+for i, axi in enumerate(ax.flat):
+    axi.axis('off')
+    # i runs from 0 to (nrows * ncols-1)
+    # axi is equivalent with ax[rowid][colid]
+    if (i <savings[0]) or (i>= ncol and i <(ncol+savings[1])) or (i>= ncol*2 and i <(ncol*2+savings[2])):
+        img = plt.imread('Images/milkjug.png')
+        axi.imshow(img, alpha=0.95, extent=[0, 550, 0, 550])
+ax[0][0].annotate(text[0], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[0], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top',
+            )
+ax[1][0].annotate(text[1], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[1], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top',
+            )
+ax[2][0].annotate(text[2], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[2], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top',
+            )
+plt.show()
 
-# Overall Waffle Plot
-# Prepare Data
-df = df_events.groupby('Label', as_index=False)['Volume(gal)'].sum()
-df = df[(df.Label != 'irrigation') & (df.Label != 'hose')]
-n_categories = df.shape[0]
-colors = [plt.cm.inferno_r(i/float(n_categories)) for i in range(n_categories)]
-
-# Draw Plot and Decorate
-fig = plt.figure(
-    FigureClass=Waffle,
-    plots={
-        '111': {
-            'values': df['Volume(gal)'],
-            'labels': ["{0} ({1})".format(n[0], n[1]) for n in df[['Label', 'Volume(gal)']].itertuples()],
-            'legend': {'loc': 'upper left', 'bbox_to_anchor': (1.05, 1), 'fontsize': 12},
-            #'title': {'label': '# Vehicles by Class', 'loc': 'center', 'fontsize':18}
-        },
-    },
-    rows=4,
-    colors=colors,
-    figsize=(16, 9)
-)

@@ -160,30 +160,34 @@ plt.savefig('Images/outdoor_scenarios.png', bbox_inches='tight')
 fig2 = plt.figure(figsize=(7, 9))
 fig2.subplots_adjust(hspace=0, wspace=0)
 ax = fig2.add_subplot(2, 1, 1)
+# import background
 img = plt.imread('Images/house.png')
 ax.imshow(img, extent=[0, 170, 0, 110])
 ax.axis('off')
+# add text
 plt.text(x=47.5, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction) + ' acres',
          fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=12)
 plt.text(x=140, y=51.15, s='{:,.3f}'.format(lot_size * lot_fraction * lot_reduce) + ' acres',
          fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=12)
 
-# Creates an illustration grass comparing weekly watering rates
+# Creates an illustration with grass to compare weekly watering rates
 ax = fig2.add_subplot(2, 1, 2)
+# import background
 img = plt.imread("Images/grass.png")
 ax.imshow(img, extent=[0, 170, 0, 110])
 ax.axis('off')
 # Create a Rectangle patch and add to axes
 rect = patches.Rectangle((3.28, 54.5), 80.15, (25*(current_inches-1)), linewidth=1, edgecolor='#2F5597', facecolor='#2F5597')
 ax.add_patch(rect)
-plt.text(x=26, y=45+(25*(current_inches-1)), s='{:,.2f}'.format(current_inches) + ' inches/week', fontweight='bold', color='w', fontname='Arial Narrow', va='bottom',
-         fontsize=13, alpha=0.8)
-plt.text(x=25, y=55+(25*(current_inches-1)), s='Currently watering', fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom',
-        fontsize=13)
-plt.text(x=112, y=45, s='1 inch/week', fontweight='bold', color='w', fontname='Arial Narrow', va='bottom',
-         fontsize=13, alpha=0.8)
-plt.text(x=97, y=55, s='Recommended watering', fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom',
-        fontsize=13)
+# add text
+plt.text(x=26, y=45+(25*(current_inches-1)), s='{:,.2f}'.format(current_inches) + ' inches/week',
+         fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=13, alpha=0.8)
+plt.text(x=25, y=55+(25*(current_inches-1)), s='Currently watering',
+         fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom', fontsize=13)
+plt.text(x=112, y=45, s='1 inch/week',
+         fontweight='bold', color='w', fontname='Arial Narrow', va='bottom', fontsize=13, alpha=0.8)
+plt.text(x=97, y=55, s='Recommended watering',
+         fontweight='bold', color='#203864', fontname='Arial Narrow', va='bottom', fontsize=13)
 
 # to save
 plt.savefig('Images/outdoor_illustration.png', bbox_inches='tight')

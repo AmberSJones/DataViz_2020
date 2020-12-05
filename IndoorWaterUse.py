@@ -20,6 +20,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+from matplotlib import gridspec
 #####################
 
 # Import Classified/Labeled Event Data
@@ -184,13 +185,16 @@ both_vol = short_dur * low_flow
 both_save = current_daily_vol - both_vol
 # saving 14 gal/day
 
+#####################
 # Plotting
 #####################
+
 # inputs
 Scenario = ['Current Showering', 'Shorter Showers', 'Ultra Low Flow', 'Shorter and Low Flow']
 Volume = [current_daily_vol, short_dur_vol, low_flow_vol, both_vol]
 
-# plots a bar chart
+# Bar Chart
+#####################
 fig4 = plt.figure(figsize=(8, 5))
 ax = fig4.add_subplot(1, 1, 1)
 colors = ['#004c6d', '#3d708f', '#75a1be', '#94bed9']
@@ -213,17 +217,19 @@ plt.show()
 plt.savefig('Images/shower_scenarios.png', bbox_inches='tight')
 
 
-# plots an analogous bathtub image
-Labels = ['Currently using ' + str(current_daily_vol.astype(int)) + ' gal/day',
-          'Shorter Showers save ' + str((current_daily_vol - short_dur_vol).astype(int)) +' gal/day',
-          'Low Flows save ' + str((current_daily_vol - low_flow_vol).astype(int)) +' gal/day',
-          'Both save ' + str((current_daily_vol - both_vol).astype(int)) +' gal/day']
+# Bathtub Plot
+#####################
+Labels = ['Currently using ' + str(round(current_daily_vol)) + ' gal/day',
+          'Shorter Showers use ' + str(round(short_dur_vol)) +' gal/day',
+          'Low Flows use ' + str(round(low_flow_vol)) +' gal/day',
+          'Both use ' + str(round(both_vol)) +' gal/day']
 colors = ['#00354d', '#25556e', '#457891', '#659cb5']
 # read in bathtub image
 img = plt.imread('Images/TubEmpty.png')
 fig5 = plt.figure(figsize=(8, 5))
 ax = fig5.add_subplot(1, 1, 1)
 ax.axis('off')
+ax.imshow(img, extent=[0, 140, 0, 108])
 # to get wavy lines
 rcParams['path.sketch'] = (1, 100, 2)
 # lines and labels
@@ -231,8 +237,7 @@ for i in range(len(Volume)):
     ax.plot(np.linspace(3.5, 114.5, 1000), [Volume[i]] * 1000, color=colors[i], linewidth=3)
     plt.text(x=120, y=Volume[i], s=Labels[i],
              fontweight='bold', color=colors[i], fontname='Arial Narrow', va='center',fontsize=12)
-ax.imshow(img, extent=[0, 140, 0, 108])
-# Standard tub size annotation with arrow
+# standard tub size annotation with arrow
 ax.annotate('Standard\ntub size', xy=(3, 42), xytext=(-5, 42), annotation_clip=False, rotation=0,
             fontsize=9, ha='right', va='center', fontname='Arial Narrow', color='gray', fontweight='bold',
             arrowprops=dict(arrowstyle='simple', mutation_scale=22, facecolor='gray', edgecolor='w'),
@@ -245,6 +250,53 @@ rcParams['path.sketch'] = (0, 0, 0)
 
 # to save
 plt.savefig('Images/tub_illustration.png', bbox_inches='tight')
+
+# Savings Plot
+#####################
+# plots milkjug images to indicate savings in gallons/day
+
+# inputs
+savings = [round(current_daily_vol - short_dur_vol),
+           round(current_daily_vol - low_flow_vol),
+           round(current_daily_vol - both_vol)]
+text = ['Shorter Showers save\n' + str(savings[0]) +' gallons/day',
+          'Low Flows save\n' + str(savings[1]) +' gallons/day',
+          'Both save\n' + str(savings[2]) +' gallons/day']
+colors = ['#25556e', '#457891', '#659cb5']
+ncol = max(savings)
+nrow = len(savings)
+
+# create plot
+fig6, ax = plt.subplots(nrows=rows, ncols=ncol, figsize=(ncol, nrow))
+# reduce spacing
+fig6.subplots_adjust(hspace=0.00, wspace=0.00)
+gs = gridspec.GridSpec(nrow, ncol,
+         wspace=0.0, hspace=0.0,
+         top=1.-0.5/(nrow+1), bottom=0.5/(nrow+1),
+         left=0.5/(ncol+1), right=1-0.5/(ncol+1))
+# create subplots. each subplot corresponding to savings receives a milkjug image.
+for i, axi in enumerate(ax.flat):
+    axi.axis('off')
+    # i runs from 0 to (nrows * ncols-1)
+    # axi is equivalent with ax[rowid][colid]
+    if (i < savings[0]) or (ncol <= i < (ncol + savings[1])) or (ncol * 2 <= i < (ncol * 2 + savings[2])):
+        img = plt.imread('Images/milkjug.png')
+        axi.imshow(img, alpha=0.95, extent=[0, 550, 0, 550])
+# add text
+ax[0][0].annotate(text[0], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[0], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top')
+ax[1][0].annotate(text[1], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[1], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top')
+ax[2][0].annotate(text[2], xy=(0, 275), xytext=(0, 275), annotation_clip=False, rotation=0,
+            fontsize=11, ha='right', va='center', fontname='Arial Narrow', color=colors[2], fontweight='bold',
+            horizontalalignment='right', verticalalignment='top')
+fig6.suptitle('Shower Scenario Daily Savings')
+plt.show()
+
+# to save
+plt.savefig('Images/milkjug_illustration.png', bbox_inches='tight')
 
 ##########################################
 
